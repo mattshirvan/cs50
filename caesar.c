@@ -38,8 +38,8 @@ int main(int argc, string argv[])
     }
 
     // prompt user for string
-    string s = get_string("Plaintext: ");
-    printf("Ciphertext: ");
+    string s = get_string("plaintext: ");
+    printf("ciphertext: ");
 
     // iterate over plain text
     for (int i = 0, n = strlen(s); i < n; i++)
