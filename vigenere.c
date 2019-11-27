@@ -42,6 +42,8 @@ int main(int argc, string argv[])
     string s = get_string("plaintext: ");
     printf("ciphertext: ");
 
+    // most of this code is mine but there was some taken from the net
+    // sorry i am only 2 months into this
     // iterate over plain text
     for (int i = 0, j = 0, n = strlen(s); i < n; i++)
     {
