@@ -1,5 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
+
+void write(unsigned char *buff, FILE *file);
+bool isaHeader(unsigned char *header);
 
 
 int main(int argc, char *argv[])
@@ -22,47 +26,53 @@ int main(int argc, char *argv[])
         return 2;
     }
 
-    // create buffer
+    // create buffer and output file
+    FILE *outptr;
     unsigned char buffer[512];
+    char jpeg[8];
+    bool jpegfound = false;
     int i = 0;
 
     // iterate over the file to find JPEG
-    // read the infile's JPEG
-    // and write the new JPEG
     while (fread(&buffer, 1, 512, inptr) != 0x00)
     {
         //check if file is JPEG
-        if (buffer[0] == 0xff && buffer[1] == 0xd8 && buffer[2] == 0xff && (buffer[3] & 0xf0) == 0xe0)
+        if (isaHeader(buffer))
         {
-            char jpeg[8];
             // re-open output file
-            FILE *outptr = fopen(jpeg, "w");
+            sprintf(jpeg, "%03i.jpg", i++);
+            outptr = fopen(jpeg, "w");
             if (outptr == NULL)
             {
                 fclose(inptr);
                 fprintf(stderr, "Could not create %s.\n", jpeg);
                 return 3;
             }
-
-            // write outfile JPEG
-
-            fwrite(buffer, 1, 512, outptr);
-            sprintf(jpeg, "%03i.jpg", i);
-            fclose(outptr);
-            i++;
         }
-
-        // if it's the end of file close
-        else if (fread(&buffer, 1, 512, inptr) == 1)
-        {
-            fclose(inptr);
-            return 0;
-        }
-
-        // continue if JPEG not found
-        else
-        {
-            continue;
-        }
+        // write outfile JPEG
+        write(buffer, outptr);
     }
+    fclose(inptr);
+    fclose(outptr);
+}
+
+// write the jpeg bytes to outfile
+void write(unsigned char *buff, FILE *file)
+{
+    if (file != NULL)
+    {
+        fwrite(buff, 1, 512, file);
+    }
+}
+
+bool isaHeader(unsigned char *header)
+{
+    if (header[0] == 0xff &&
+    header[1] == 0xd8 &&
+    header[2] == 0xff &&
+    (header[3] & 0xf0) == 0xe0)
+    {
+        return true;
+    }
+    return false;
 }
