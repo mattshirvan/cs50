@@ -85,10 +85,9 @@ void print_winner(void)
     // TODO
     for (int i = 0; i < MAX; i++)
     {
-        int win = (candidates[0].votes < candidates[i].votes) ? candidates[i].votes : candidates[0].votes;
-        if (candidates[i].votes == win)
+        if (candidates[i].votes >= candidates[i+1].votes && candidates[i].name != NULL)
         {
-            printf("%s \n", candidates[i].name);
+            printf("%s\n", candidates[i].name);
         }
     }
     return;
